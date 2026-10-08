@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<kml xmlns="http://www.opengis.net/kml/2.2">
+  <Document>
+    <name>geo-api example</name>
+    <Placemark id="sample-plot">
+      <name>Sample plot</name>
+      <ExtendedData>
+        <Data name="parcel_id"><value>BLR-001</value></Data>
+      </ExtendedData>
+      <Polygon>
+        <outerBoundaryIs>
+          <LinearRing>
+            <coordinates>77.5940,12.9710 77.5950,12.9710 77.5950,12.9720 77.5940,12.9720 77.5940,12.9710</coordinates>
+          </LinearRing>
+        </outerBoundaryIs>
+      </Polygon>
+    </Placemark>
+  </Document>
+</kml>

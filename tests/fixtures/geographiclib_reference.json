@@ -1,0 +1,277 @@
+{
+  "generator": "scripts/generate_reference_fixtures.py",
+  "library": "GeographicLib",
+  "library_version": "2.1",
+  "ellipsoid": "WGS84",
+  "edge_model": "wgs84_shortest_geodesic",
+  "area_method": "Geodesic.WGS84.Polygon.Compute",
+  "length_method": "sum of Geodesic.WGS84.Inverse segment distances",
+  "references": [
+    {
+      "name": "bengaluru-square",
+      "kind": "area",
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              77.58,
+              12.96
+            ],
+            [
+              77.59,
+              12.96
+            ],
+            [
+              77.59,
+              12.97
+            ],
+            [
+              77.58,
+              12.97
+            ],
+            [
+              77.58,
+              12.96
+            ]
+          ]
+        ]
+      },
+      "reference_value": 1200336.865179062,
+      "unit": "m2"
+    },
+    {
+      "name": "antimeridian-polygon-with-hole",
+      "kind": "area",
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              179.9,
+              -0.05
+            ],
+            [
+              -179.9,
+              -0.05
+            ],
+            [
+              -179.9,
+              0.05
+            ],
+            [
+              179.9,
+              0.05
+            ],
+            [
+              179.9,
+              -0.05
+            ]
+          ],
+          [
+            [
+              179.95,
+              -0.02
+            ],
+            [
+              -179.95,
+              -0.02
+            ],
+            [
+              -179.95,
+              0.02
+            ],
+            [
+              179.95,
+              0.02
+            ],
+            [
+              179.95,
+              -0.02
+            ]
+          ]
+        ]
+      },
+      "reference_value": 196945362.9047038,
+      "unit": "m2"
+    },
+    {
+      "name": "polar-explicit-boundary",
+      "kind": "area",
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              -135,
+              89.5
+            ],
+            [
+              -45,
+              89.5
+            ],
+            [
+              45,
+              89.5
+            ],
+            [
+              135,
+              89.5
+            ],
+            [
+              -135,
+              89.5
+            ]
+          ]
+        ]
+      },
+      "reference_value": 6237848505.78125,
+      "unit": "m2"
+    },
+    {
+      "name": "southern-high-latitude",
+      "kind": "area",
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              140,
+              -75
+            ],
+            [
+              140.1,
+              -75
+            ],
+            [
+              140.1,
+              -74.9
+            ],
+            [
+              140,
+              -74.9
+            ],
+            [
+              140,
+              -75
+            ]
+          ]
+        ]
+      },
+      "reference_value": 32364794.9581604,
+      "unit": "m2"
+    },
+    {
+      "name": "long-thin-polygon-with-narrow-hole",
+      "kind": "area",
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              -0.8,
+              -0.001
+            ],
+            [
+              0.8,
+              -0.001
+            ],
+            [
+              0.8,
+              0.001
+            ],
+            [
+              -0.8,
+              0.001
+            ],
+            [
+              -0.8,
+              -0.001
+            ]
+          ],
+          [
+            [
+              -5e-07,
+              -0.0005
+            ],
+            [
+              5e-07,
+              -0.0005
+            ],
+            [
+              5e-07,
+              0.0005
+            ],
+            [
+              -5e-07,
+              0.0005
+            ],
+            [
+              -5e-07,
+              -0.0005
+            ]
+          ]
+        ]
+      },
+      "reference_value": 39391595.494236626,
+      "unit": "m2"
+    },
+    {
+      "name": "component-near-100km-radius",
+      "kind": "length",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            0,
+            0
+          ],
+          [
+            1.78,
+            0
+          ]
+        ]
+      },
+      "reference_value": 198148.69361202695,
+      "unit": "m"
+    },
+    {
+      "name": "off-center-tangential-line",
+      "kind": "length",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            77.58,
+            12.96
+          ],
+          [
+            77.62,
+            12.99
+          ]
+        ]
+      },
+      "reference_value": 5463.444432701309,
+      "unit": "m"
+    },
+    {
+      "name": "antimeridian-line",
+      "kind": "length",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            179.9,
+            0
+          ],
+          [
+            -179.9,
+            0
+          ]
+        ]
+      },
+      "reference_value": 22263.898158653446,
+      "unit": "m"
+    }
+  ]
+}

@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<kml xmlns="http://www.opengis.net/kml/2.2">
+  <Document>
+    <Placemark id="measured-plot">
+      <name>Measured plot</name>
+      <Polygon>
+        <outerBoundaryIs>
+          <LinearRing>
+            <coordinates>77.5940,12.9710 77.5950,12.9710 77.5950,12.9720 77.5940,12.9720 77.5940,12.9710</coordinates>
+          </LinearRing>
+        </outerBoundaryIs>
+      </Polygon>
+    </Placemark>
+    <Placemark id="inspection-point">
+      <name>Inspection point</name>
+      <Point><coordinates>77.5945,12.9715,7</coordinates></Point>
+    </Placemark>
+    <Placemark id="mixed-geometry">
+      <name>Mixed geometry</name>
+      <MultiGeometry>
+        <Point><coordinates>77.5945,12.9715</coordinates></Point>
+        <LineString><coordinates>77.5940,12.9710 77.5950,12.9720</coordinates></LineString>
+      </MultiGeometry>
+    </Placemark>
+  </Document>
+</kml>
