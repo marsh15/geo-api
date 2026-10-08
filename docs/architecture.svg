@@ -16,9 +16,9 @@
       .both { fill:none; stroke:#727b86; stroke-width:2; stroke-linecap:round; stroke-dasharray:7 8; marker-start:url(#arrow); marker-end:url(#arrow); }
       .title { font:700 36px 'Virgil','Comic Sans MS','Segoe Print',cursive; fill:#202936; }
       .subtitle { font:19px 'Virgil','Comic Sans MS','Segoe Print',cursive; fill:#5b6470; }
-      .head { font:700 21px 'Virgil','Comic Sans MS','Segoe Print',cursive; fill:#202936; }
-      .body { font:17px 'Virgil','Comic Sans MS','Segoe Print',cursive; fill:#374151; }
-      .small { font:15px 'Virgil','Comic Sans MS','Segoe Print',cursive; fill:#5b6470; }
+      .head { font:700 19px 'Virgil','Comic Sans MS','Segoe Print',cursive; fill:#202936; }
+      .body { font:16px 'Virgil','Comic Sans MS','Segoe Print',cursive; fill:#374151; }
+      .small { font:14px 'Virgil','Comic Sans MS','Segoe Print',cursive; fill:#5b6470; }
       .tag { font:700 14px 'Virgil','Comic Sans MS','Segoe Print',cursive; fill:#475569; letter-spacing:.3px; }
     </style>
   </defs>
@@ -37,7 +37,7 @@
   <path d="M53 241 C64 233 78 235 91 234 L201 235 C214 236 220 245 219 258 L217 330 C216 343 207 350 194 349 L66 348 C54 347 48 339 49 326 L50 255 C50 249 51 245 53 241Z" fill="#ffffff" class="ink"/>
   <text x="73" y="275" class="head">HTTP client</text>
   <text x="73" y="305" class="body">POST .kml or .zip</text>
-  <text x="73" y="331" class="small">GET summary and results</text>
+  <text x="73" y="331" class="small">GET / DELETE</text>
 
   <path d="M280 218 C291 214 306 217 321 216 L458 218 C472 219 479 227 478 241 L476 322 C475 336 467 343 453 342 L290 343 C277 342 271 334 272 320 L274 237 C274 228 276 222 280 218Z" fill="#e7efff" class="ink"/>
   <text x="294" y="253" class="head">Request admission</text>
@@ -49,20 +49,23 @@
   <text x="558" y="253" class="head">FastAPI upload route</text>
   <text x="558" y="282" class="body">Checks form and filename</text>
   <text x="558" y="307" class="body">Stages file and checksum</text>
-  <text x="558" y="331" class="small">starts the fixed worker module</text>
+  <text x="558" y="331" class="small">starts the worker</text>
 
-  <path d="M841 166 C855 159 870 163 887 162 L1127 164 C1141 165 1148 175 1148 190 L1145 433 C1144 448 1134 455 1119 454 L857 456 C842 455 834 446 835 431 L837 187 C837 178 838 171 841 166Z" fill="#fff1cb" stroke="#8b6d30" stroke-width="2.6" stroke-dasharray="9 6" stroke-linecap="round" stroke-linejoin="round" filter="url(#paper)"/>
+  <path d="M841 166 C855 159 870 163 887 162 L1127 164 C1141 165 1148 175 1148 190 L1145 466 C1144 480 1134 487 1119 486 L857 488 C842 487 834 478 835 463 L837 187 C837 178 838 171 841 166Z" fill="#fff1cb" stroke="#8b6d30" stroke-width="2.6" stroke-dasharray="9 6" stroke-linecap="round" stroke-linejoin="round" filter="url(#paper)"/>
   <text x="858" y="200" class="tag">SEPARATE PROCESS</text>
-  <path d="M860 218 C870 215 882 217 895 216 L1108 218 C1120 219 1127 226 1127 238 L1125 297 C1124 309 1117 315 1105 314 L872 314 C861 313 855 306 855 295 L856 232 C856 225 857 220 860 218Z" fill="#fffaf0" class="ink"/>
-  <text x="875" y="251" class="head">KML and Shapefile readers</text>
-  <text x="875" y="280" class="body">features, properties, and CRS</text>
-  <path d="M860 329 C870 326 882 328 895 327 L1108 329 C1120 330 1127 337 1127 349 L1125 412 C1124 424 1117 430 1105 429 L872 429 C861 428 855 421 855 410 L856 343 C856 336 857 331 860 329Z" fill="#fffaf0" class="ink"/>
-  <text x="875" y="362" class="head">CRS transform</text>
-  <text x="875" y="392" class="body">Area and length measurement</text>
-  <text x="875" y="417" class="small">geodesic edges · local projection</text>
+  <path d="M860 218 C870 215 882 217 895 216 L1108 218 C1120 219 1127 226 1127 238 L1125 318 C1124 330 1117 336 1105 335 L872 335 C861 334 855 327 855 316 L856 232 C856 225 857 220 860 218Z" fill="#fffaf0" class="ink"/>
+  <text x="875" y="251" class="head">Input readers</text>
+  <text x="875" y="279" class="body">KML and Shapefile</text>
+  <text x="875" y="303" class="small">geometry and properties</text>
+  <text x="875" y="325" class="small">source CRS retained</text>
+  <path d="M860 347 C870 344 882 346 895 345 L1108 347 C1120 348 1127 355 1127 367 L1125 454 C1124 466 1117 472 1105 471 L872 471 C861 470 855 463 855 452 L856 361 C856 354 857 349 860 347Z" fill="#fffaf0" class="ink"/>
+  <text x="875" y="380" class="head">CRS transform</text>
+  <text x="875" y="408" class="body">Area and line length</text>
+  <text x="875" y="434" class="small">WGS84 geodesic edges</text>
+  <text x="875" y="458" class="small">local metre projections</text>
 
   <path d="M1204 218 C1216 215 1230 217 1246 216 L1433 218 C1447 219 1454 227 1453 241 L1451 322 C1450 336 1442 343 1428 342 L1214 343 C1201 342 1194 334 1195 320 L1197 237 C1197 228 1199 222 1204 218Z" fill="#e7efff" class="ink"/>
-  <text x="1214" y="253" class="head">Parent validates output</text>
+  <text x="1214" y="253" class="head">Validate worker output</text>
   <text x="1214" y="282" class="body">manifest and JSONL limits</text>
   <text x="1214" y="307" class="body">order, counts, statuses</text>
   <text x="1214" y="331" class="small">before transaction</text>
@@ -70,9 +73,9 @@
   <!-- Staging, worker files, database, and reads -->
   <path d="M549 532 C561 528 576 531 591 530 L759 532 C773 533 780 541 779 554 L777 647 C776 660 768 666 754 665 L560 666 C547 665 541 657 542 643 L544 551 C544 542 545 536 549 532Z" fill="#f2eaff" class="ink"/>
   <text x="562" y="568" class="head">Private workspace</text>
-  <text x="562" y="597" class="body">source.data and worker files</text>
-  <text x="562" y="624" class="small">removed after the request</text>
-  <text x="562" y="648" class="small">startup clears abandoned dirs</text>
+  <text x="562" y="597" class="body">source.data and results</text>
+  <text x="562" y="624" class="small">removed after each request</text>
+  <text x="562" y="648" class="small">startup clears leftovers</text>
 
   <path d="M857 532 C869 528 883 531 899 530 L1116 532 C1130 533 1137 541 1136 554 L1134 647 C1133 660 1125 666 1111 665 L868 666 C855 665 849 657 850 643 L852 551 C852 542 853 536 857 532Z" fill="#e7efff" class="ink"/>
   <text x="874" y="568" class="head">Read and delete routes</text>
@@ -88,7 +91,7 @@
 
   <!-- The workspace is shared by the parent and child. Labels stay inside the cards. -->
   <path class="dotted" d="M652 344 C650 398 650 454 653 522"/>
-  <path class="both" d="M783 565 C817 541 832 500 851 452"/>
+  <path class="both" d="M783 565 C817 541 832 512 851 484"/>
   <path class="line" d="M1408 345 C1431 396 1460 445 1485 516"/>
   <path class="line" d="M1385 591 C1300 591 1230 591 1143 591"/>
   <text x="1223" y="379" class="small">completed result</text>
