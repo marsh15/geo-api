@@ -1,18 +1,21 @@
 # Glossary
 
+This glossary defines the terms used in the API and measurement documentation.
+
 | Term | Meaning in geo-api |
 |---|---|
-| File | The uploaded KML or ZIP archive and its retained database summary. |
-| Dataset | The set of source features extracted from one uploaded file. |
-| Feature | One source record or KML Placemark, identified by a stable zero-based `feature_index`. |
-| Component | One connected polygon or line part measured within a feature. |
-| Ring | A closed coordinate path that bounds a polygon. |
-| Shell | A polygon ring that bounds the filled area. |
-| Hole | A polygon ring excluded from its containing shell. |
-| CRS | Coordinate reference system: the coordinate axes, units, and Earth reference used by source data. |
+| CRS | Coordinate reference system. It defines coordinate axes, units, and the Earth reference used by a dataset. |
+| Component | One connected line or polygon part measured on its own local projection. A multipart feature can contain several components. |
+| Dataset | The ordered set of source features read from one uploaded file. |
 | Datum | The Earth reference model associated with a CRS. |
-| Projection | A coordinate transformation from the curved Earth to a plane. |
-| Measurement | A 2D projected area or length with units and method provenance. |
-| Warning | A bounded note that processing completed but encountered a non-fatal condition. |
-| Unsupported geometry | A recognized input geometry that v1 does not measure. |
-| Failed upload | A file-wide processing failure persisted without partial feature results. |
+| Failed upload | An upload whose file-level processing failed. If PostgreSQL is available, geo-api stores a `FAILED` file summary without feature rows. |
+| Feature | One KML Placemark or Shapefile record. geo-api assigns it a stable, zero-based `feature_index`. |
+| File | The uploaded KML or ZIP archive, its metadata, and the database summary retained after processing. The original upload is deleted after processing. |
+| Hole | A polygon ring whose area is excluded from its containing shell. |
+| Measurement | A two-dimensional area or length, with a unit and method provenance. |
+| Projection | A coordinate transformation that maps locations on the curved Earth to a plane. |
+| Ring | A closed path of coordinates used as a polygon boundary. |
+| Shell | The polygon ring that bounds the filled area. |
+| Source geometry | The geometry and coordinates extracted from the input file, retained with source CRS information. |
+| Unsupported geometry | A recognized geometry that v1 does not measure. The feature remains in the result with status `UNSUPPORTED`. |
+| Warning | A bounded note about a non-fatal condition. Processing can complete while a file or feature carries a warning. |

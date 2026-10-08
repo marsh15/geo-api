@@ -1,22 +1,29 @@
 # Learning notes
 
-These are implementation notes for a developer learning GIS; they describe what the code and fixtures demonstrate.
+Use these notes to follow one feature from its source file through measurement and storage. The examples use KML, Shapefiles, and the test fixtures in this repository.
 
-## Follow one feature through the code
+## Trace one feature through the service
 
-1. Read a KML `Placemark` or Shapefile record and identify its coordinates, properties, and source CRS.
-2. Compare the same longitude/latitude deltas near the equator and Bengaluru. The numeric degrees are angular units; using planar `.area` on them does not produce square metres.
-3. Trace the source-to-WGS84 transformation. geo-api sets XY axis order explicitly and records the selected operation and known accuracy.
-4. Follow a polygon with a hole. KML gives shell and hole roles directly; Shapefile rings use winding and projected containment. The hole is subtracted after projection.
-5. Follow a dateline edge from `179.9°` to `-179.9°`. The chosen edge is the short WGS84 geodesic, and vector averaging avoids a center near Greenwich.
-6. Compare one projected refinement with the next. Stable successive approximations are required, then the independent GeographicLib reference is checked separately.
-7. Upload the fixture and follow the request ID through body admission, worker output validation, and the PostgreSQL transaction.
-8. Trigger one invalid ZIP path and one failed worker result. Check that the response is structured, the file-wide failure has no feature rows, and the workspace is removed.
+1. Start with `tests/fixtures/sample.kml`. Find its `Placemark` ID, ExtendedData, polygon coordinates, and the WGS84 CRS assumption in [the file reader](../src/geo_api/processing/readers.py).
+2. Read the source-to-WGS84 transformation in [the measurement module](../src/geo_api/processing/measurement.py). The implementation sets XY axis order explicitly and records the selected transformation and its known accuracy.
+3. Compare a fixed longitude and latitude difference near the equator and near Bengaluru. The coordinate difference has the same angular values, but its ground distance changes with latitude. A planar Shapely area on those degree values is not an area in square metres.
+4. Follow a polygon with a hole. KML boundary tags identify the shell and holes. Shapefile rings use winding, then projected containment to assign a hole. The measurement code subtracts hole area from shell area.
+5. Follow an edge from longitude `179.9°` to `-179.9°`. The edge model selects the short WGS84 geodesic across the antimeridian. The component center uses a 3D unit-vector mean, so it does not land near Greenwich because of longitude wraparound.
+6. Compare successive densification refinements in `measurement.py`. The implementation requires two consecutive transitions to meet the convergence tolerance. The independent values in `tests/fixtures/geographiclib_reference.json` check the numerical result against a separate implementation.
+7. Trace an upload from `RequestBoundaryMiddleware` in `middleware/admission.py` through `api/routes.py:upload_file`. The middleware applies the request limits before the route parses multipart data. The route stages the file and starts `processing/worker.py` as a child process.
+8. Follow the worker output through `processing/runner.py`. The parent checks the terminal manifest, feature ordering, status totals, and output bounds before it starts a PostgreSQL transaction.
+9. Inspect the resulting file and feature rows through the API. A completed file can include `MEASURED`, `NOT_APPLICABLE`, `UNSUPPORTED`, and `ERROR` features. File completion means all source records were enumerated and the result was published. It does not mean every feature has a measurement.
+10. Trigger an invalid archive or a processor-reported failure. Check the structured error, whether the API stored a `FAILED` file summary, and whether the route removed its private workspace. A publication failure can return `503` without a saved file record.
 
-## Concepts to keep distinct
+## Keep these concepts separate
 
-- Source CRS, normalized WGS84, and measurement projection describe different stages.
-- A planar projected result is an approximation under a documented local model, not a universal Earth measurement.
-- Densification convergence answers whether the approximation is changing; an independent reference answers whether it is accurate enough for a fixture.
-- A completed dataset can have unsupported or erroneous features. Completion means the file was fully enumerated and published.
-- A source representation can be retained with coordinates and CRS without claiming the coordinates follow RFC 7946 GeoJSON axis and CRS rules.
+- **Source CRS:** the coordinate system declared by the input. Shapefiles need a readable `.prj`; KML uses WGS84 longitude and latitude.
+- **Normalized WGS84:** the common geographic coordinate system used to define the edge model.
+- **Measurement projection:** the component-centred metre-based plane used for the final 2D area or length calculation.
+- **Convergence:** evidence that the next densification refinement changed the measurement by less than the configured tolerance.
+- **Independent reference:** a separate GeographicLib result used to check the fixtures. Convergence and reference comparison answer different questions.
+- **Source representation:** retained coordinates, geometry, properties, and CRS metadata. The API calls the geometry `geojson-style-source-crs`; it does not claim RFC 7946 GeoJSON conformance.
+
+## Suggested reading order
+
+Read the [API reference](api.md) to see the request and response contract. Then read the [design guide](design.md) for upload ownership and failure handling, followed by the [measurement method](measurement-method.md) for projection and topology rules. The [testing guide](testing.md) shows which fixtures and checks support those claims.

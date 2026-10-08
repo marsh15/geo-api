@@ -1,27 +1,37 @@
 # Measurement method
 
-## Coordinate systems
+geo-api reports two-dimensional area and length. The method keeps source coordinates and CRS metadata for inspection, then measures a normalized copy of each supported feature. It does not treat longitude and latitude as planar metres.
 
-Longitude and latitude are angular coordinates. Their numeric differences are not metres, and their planar area changes with latitude. A source CRS describes how input coordinates relate to the Earth; it is not necessarily a suitable measurement plane. geo-api therefore requires a Shapefile `.prj`, interprets KML coordinates as WGS84, transforms source XY coordinates to WGS84, and then builds a local measurement projection per connected component.
+## Coordinate systems and transformations
 
-Transformations use traditional XY ordering, checked errors, no ballpark fallback, and local PROJ resources only. An unavailable best transformation is a feature or file error; geo-api does not silently download grids or choose a weaker operation.
+Longitude and latitude are angular coordinates. Their numeric differences are not distances, and a planar area computed directly from them changes with latitude. A source CRS describes the coordinates in an input file. It does not necessarily define a suitable plane for measuring area or length.
+
+KML coordinates are interpreted as WGS84 longitude and latitude. A Shapefile must include a readable `.prj` file. The reader rejects missing, unsupported, or invalid CRS definitions rather than guessing. The measurement code transforms source XY coordinates to WGS84, with traditional XY ordering, checked transformation errors, no ballpark fallback, and local PROJ resources only. If the best available operation needs a missing grid, the feature or file fails; geo-api does not download the grid or silently choose a weaker operation.
 
 ## Edge model and local projections
 
-Consecutive supplied vertices define the shortest WGS84 ellipsoid geodesic. geo-api densifies those edges and projects the samples. Polygon rings use ellipsoidal Lambert azimuthal equal-area (LAEA); lines use ellipsoidal azimuthal equidistant (AEQD). The center comes from the normalized mean of 3D unit vectors, so longitude averaging does not place a dateline-crossing component near Greenwich.
+Each pair of supplied vertices defines the shortest geodesic between them on the WGS84 ellipsoid. geo-api densifies that edge, then projects the samples into a local plane centered on the connected component. It finds the center from the normalized mean of 3D unit vectors. This avoids placing a component that crosses the antimeridian near Greenwich through ordinary longitude averaging.
 
-The full component, including holes and sampled edges, must be provably within a 100 km radius of its center. Segment bounds use the triangle inequality and recursive subdivision. If the remaining work budget cannot establish the bound, geo-api fails closed. This can reject a path extremely close to the boundary.
+The service uses ellipsoidal Lambert azimuthal equal-area (LAEA) for polygon area and ellipsoidal azimuthal equidistant (AEQD) for line length. LAEA preserves area on the ellipsoid. AEQD preserves radial distance from the projection center, but it does not preserve every arbitrary path length exactly. The method is intended for the documented local domain.
 
-The initial densification target is 500 m and is halved for at most five refinements. Area convergence is checked against `max(0.01 m², 1e-5 × area)`; length convergence is checked against `max(0.001 m, 1e-6 × length)`. Two consecutive transitions must meet the convergence threshold. Convergence is not an independent accuracy proof.
+The entire component, including polygon holes and sampled edges, must fit within 100 km of its center. Segment bounds use the triangle inequality and recursive subdivision. If the configured work budget cannot prove that the component fits, geo-api returns an explicit failure. A valid path extremely close to the radius limit can therefore be rejected when the remaining budget cannot resolve it.
 
-## Geometry validation
+## Densification and convergence
 
-Raw coordinate finiteness, structure, and limits are checked before transformation. Geometry is validated in the projected chart after WGS84 normalization and edge sampling. KML polygon shell and hole roles come from explicit boundary tags. Shapefile roles come from source ring winding; holes are assigned only when projected containment is unambiguous.
+The initial edge segment target is 500 m. geo-api halves that target for at most five refinements. It checks area against `max(0.01 m², 1e-5 × area)` and length against `max(0.001 m, 1e-6 × length)`. Two consecutive refinement transitions must meet the applicable threshold.
 
-geo-api does not close rings, snap coordinates, remove slivers, call `buffer(0)`, apply `make_valid`, or dissolve overlapping polygons. Ambiguous source topology returns an explicit issue and never a guessed measurement.
+Convergence shows that successive projected approximations have stopped changing beyond the selected tolerance. It does not independently establish accuracy. The test suite compares results with separate GeographicLib references using the same edge model.
 
-## Accuracy claims and limits
+## Geometry validation and topology
 
-Numerical tests compare against independent GeographicLib ellipsoidal references for the same shortest-geodesic edge model. The stated acceptance threshold is 0.1% (with small absolute floors); it is a fixture-level acceptance target, not a global mathematical guarantee or survey certification. AEQD preserves distances from its center but not every arbitrary path length exactly, so off-center paths and high latitudes require independent comparison.
+The reader checks coordinate types, finiteness, structure, and resource limits before transformation. The measurement code validates geometry in the projected chart after WGS84 normalization and edge sampling.
 
-The 100 km component radius and resource budgets are part of v1. geo-api supports suitable local and regional features at global locations, including tested antimeridian and polar cases, subject to those limits. It does not measure terrain slope, elevation, extrusion, or planet-scale geometry.
+KML polygon shell and hole roles come from the document's boundary tags. Shapefile ring roles come from source winding; the code assigns holes only when projected containment is unambiguous. If the input does not establish those roles clearly, the feature receives an issue.
+
+geo-api does not close rings, snap coordinates, remove slivers, call `buffer(0)`, apply `make_valid`, or dissolve overlapping polygons. These operations can change the source shape. V1 returns an explicit issue for invalid or ambiguous topology instead of silently changing the geometry.
+
+## Accuracy and supported domain
+
+Numerical tests compare the implementation with independent GeographicLib ellipsoidal references. The acceptance thresholds are `max(0.01 m², 0.1% of reference area)` for area and `max(0.001 m, 0.1% of reference length)` for length. They apply to the checked-in fixtures under the same shortest-geodesic edge model. They are not a guarantee for all possible geometries and do not certify survey measurements.
+
+The v1 policy limits each connected component to a 100 km radius and places finite budgets on input coordinates, generated coordinates, and processing work. It supports suitable local and regional features at global locations, including tested polar and antimeridian cases. It does not measure terrain slope, elevation, extrusion, or planet-scale geometry.

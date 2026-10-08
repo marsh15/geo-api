@@ -1,1 +1,12 @@
 Generic single-database configuration.
+# Database migrations
+
+Alembic revisions define the PostgreSQL schema. The first revision, `0001_initial.py`, creates the `files` and `features` tables, their indexes, the terminal-state and measurement constraints, and the cascading feature foreign key.
+
+The API container runs `alembic upgrade head` before Uvicorn starts. In a native development environment, apply the same migration with:
+
+```sh
+uv run alembic upgrade head
+```
+
+Add schema changes as new revisions in `migrations/versions/`. Do not edit an applied revision to change an existing database; add a forward migration instead. Use `uv run alembic downgrade -1` only for a development database when you need to reverse the latest revision.

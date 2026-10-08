@@ -1,0 +1,105 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1680 980" role="img" aria-labelledby="title desc">
+  <title id="title">geo-api architecture</title>
+  <desc id="desc">A hand-drawn diagram of the geo-api upload flow. A client sends a file through request admission and the upload route. A separate worker reads and measures it, then returns a manifest and feature records for validation and atomic storage in PostgreSQL. Read routes serve saved results. Temporary files are removed after the request.</desc>
+  <defs>
+    <filter id="paper" x="-4%" y="-4%" width="108%" height="108%">
+      <feTurbulence type="fractalNoise" baseFrequency="0.7" numOctaves="2" seed="7" result="noise"/>
+      <feDisplacementMap in="SourceGraphic" in2="noise" scale="1.1" xChannelSelector="R" yChannelSelector="G"/>
+    </filter>
+    <marker id="arrow" markerWidth="12" markerHeight="12" refX="9" refY="6" orient="auto" markerUnits="strokeWidth">
+      <path d="M1 1 L10 6 L1 11" fill="none" stroke="#374151" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+    </marker>
+    <style>
+      .ink { stroke:#374151; stroke-width:2.4; stroke-linecap:round; stroke-linejoin:round; filter:url(#paper); }
+      .line { fill:none; stroke:#374151; stroke-width:2.4; stroke-linecap:round; stroke-linejoin:round; marker-end:url(#arrow); }
+      .dotted { fill:none; stroke:#727b86; stroke-width:2; stroke-linecap:round; stroke-dasharray:7 8; marker-end:url(#arrow); }
+      .both { fill:none; stroke:#727b86; stroke-width:2; stroke-linecap:round; stroke-dasharray:7 8; marker-start:url(#arrow); marker-end:url(#arrow); }
+      .title { font:700 36px 'Virgil','Comic Sans MS','Segoe Print',cursive; fill:#202936; }
+      .subtitle { font:19px 'Virgil','Comic Sans MS','Segoe Print',cursive; fill:#5b6470; }
+      .head { font:700 21px 'Virgil','Comic Sans MS','Segoe Print',cursive; fill:#202936; }
+      .body { font:17px 'Virgil','Comic Sans MS','Segoe Print',cursive; fill:#374151; }
+      .small { font:15px 'Virgil','Comic Sans MS','Segoe Print',cursive; fill:#5b6470; }
+      .tag { font:700 14px 'Virgil','Comic Sans MS','Segoe Print',cursive; fill:#475569; letter-spacing:.3px; }
+    </style>
+  </defs>
+
+  <rect width="1680" height="980" rx="18" fill="#fbfaf6"/>
+  <path d="M42 112 C410 105 900 119 1638 109" fill="none" stroke="#e5e0d6" stroke-width="2"/>
+  <text x="60" y="66" class="title">geo-api · request and processing flow</text>
+  <text x="62" y="96" class="subtitle">One synchronous upload request, an isolated worker, and one PostgreSQL publication transaction</text>
+
+  <!-- Request and processing path -->
+  <path class="line" d="M218 295 C237 290 248 282 268 280"/>
+  <path class="line" d="M478 280 C501 279 512 279 535 280"/>
+  <path class="line" d="M770 280 C791 276 805 267 827 258"/>
+  <path class="line" d="M1143 258 C1160 261 1172 270 1190 280"/>
+
+  <path d="M53 241 C64 233 78 235 91 234 L201 235 C214 236 220 245 219 258 L217 330 C216 343 207 350 194 349 L66 348 C54 347 48 339 49 326 L50 255 C50 249 51 245 53 241Z" fill="#ffffff" class="ink"/>
+  <text x="73" y="275" class="head">HTTP client</text>
+  <text x="73" y="305" class="body">POST .kml or .zip</text>
+  <text x="73" y="331" class="small">GET summary and results</text>
+
+  <path d="M280 218 C291 214 306 217 321 216 L458 218 C472 219 479 227 478 241 L476 322 C475 336 467 343 453 342 L290 343 C277 342 271 334 272 320 L274 237 C274 228 276 222 280 218Z" fill="#e7efff" class="ink"/>
+  <text x="294" y="253" class="head">Request admission</text>
+  <text x="294" y="282" class="body">Request ID and headers</text>
+  <text x="294" y="307" class="body">One upload at a time</text>
+  <text x="294" y="331" class="small">body and time limits</text>
+
+  <path d="M548 218 C559 214 574 217 590 216 L752 218 C766 219 772 227 771 241 L769 322 C768 336 760 343 746 342 L559 343 C546 342 540 334 541 320 L543 237 C543 228 544 222 548 218Z" fill="#e7efff" class="ink"/>
+  <text x="558" y="253" class="head">FastAPI upload route</text>
+  <text x="558" y="282" class="body">Checks form and filename</text>
+  <text x="558" y="307" class="body">Stages file and checksum</text>
+  <text x="558" y="331" class="small">starts the fixed worker module</text>
+
+  <path d="M841 166 C855 159 870 163 887 162 L1127 164 C1141 165 1148 175 1148 190 L1145 433 C1144 448 1134 455 1119 454 L857 456 C842 455 834 446 835 431 L837 187 C837 178 838 171 841 166Z" fill="#fff1cb" stroke="#8b6d30" stroke-width="2.6" stroke-dasharray="9 6" stroke-linecap="round" stroke-linejoin="round" filter="url(#paper)"/>
+  <text x="858" y="200" class="tag">SEPARATE PROCESS</text>
+  <path d="M860 218 C870 215 882 217 895 216 L1108 218 C1120 219 1127 226 1127 238 L1125 297 C1124 309 1117 315 1105 314 L872 314 C861 313 855 306 855 295 L856 232 C856 225 857 220 860 218Z" fill="#fffaf0" class="ink"/>
+  <text x="875" y="251" class="head">KML and Shapefile readers</text>
+  <text x="875" y="280" class="body">features, properties, and CRS</text>
+  <path d="M860 329 C870 326 882 328 895 327 L1108 329 C1120 330 1127 337 1127 349 L1125 412 C1124 424 1117 430 1105 429 L872 429 C861 428 855 421 855 410 L856 343 C856 336 857 331 860 329Z" fill="#fffaf0" class="ink"/>
+  <text x="875" y="362" class="head">CRS transform</text>
+  <text x="875" y="392" class="body">Area and length measurement</text>
+  <text x="875" y="417" class="small">geodesic edges · local projection</text>
+
+  <path d="M1204 218 C1216 215 1230 217 1246 216 L1433 218 C1447 219 1454 227 1453 241 L1451 322 C1450 336 1442 343 1428 342 L1214 343 C1201 342 1194 334 1195 320 L1197 237 C1197 228 1199 222 1204 218Z" fill="#e7efff" class="ink"/>
+  <text x="1214" y="253" class="head">Parent validates output</text>
+  <text x="1214" y="282" class="body">manifest and JSONL limits</text>
+  <text x="1214" y="307" class="body">order, counts, statuses</text>
+  <text x="1214" y="331" class="small">before transaction</text>
+
+  <!-- Staging, worker files, database, and reads -->
+  <path d="M549 532 C561 528 576 531 591 530 L759 532 C773 533 780 541 779 554 L777 647 C776 660 768 666 754 665 L560 666 C547 665 541 657 542 643 L544 551 C544 542 545 536 549 532Z" fill="#f2eaff" class="ink"/>
+  <text x="562" y="568" class="head">Private workspace</text>
+  <text x="562" y="597" class="body">source.data and worker files</text>
+  <text x="562" y="624" class="small">removed after the request</text>
+  <text x="562" y="648" class="small">startup clears abandoned dirs</text>
+
+  <path d="M857 532 C869 528 883 531 899 530 L1116 532 C1130 533 1137 541 1136 554 L1134 647 C1133 660 1125 666 1111 665 L868 666 C855 665 849 657 850 643 L852 551 C852 542 853 536 857 532Z" fill="#e7efff" class="ink"/>
+  <text x="874" y="568" class="head">Read and delete routes</text>
+  <text x="874" y="597" class="body">summary and measurements</text>
+  <text x="874" y="624" class="body">feature detail and deletion</text>
+  <text x="874" y="648" class="small">serve persisted results</text>
+
+  <path d="M1396 526 C1408 522 1422 526 1438 525 L1610 527 C1624 528 1631 536 1630 550 L1628 642 C1627 656 1619 662 1605 661 L1405 662 C1392 661 1385 653 1386 639 L1388 545 C1388 536 1390 530 1396 526Z" fill="#e5f3e8" stroke="#4f7758" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" filter="url(#paper)"/>
+  <text x="1410" y="563" class="head">PostgreSQL</text>
+  <text x="1410" y="592" class="body">files and feature rows</text>
+  <text x="1410" y="619" class="small">one atomic publication</text>
+  <text x="1410" y="644" class="small">cascade on file deletion</text>
+
+  <!-- The workspace is shared by the parent and child. Labels stay inside the cards. -->
+  <path class="dotted" d="M652 344 C650 398 650 454 653 522"/>
+  <path class="both" d="M783 565 C817 541 832 500 851 452"/>
+  <path class="line" d="M1408 345 C1431 396 1460 445 1485 516"/>
+  <path class="line" d="M1385 591 C1300 591 1230 591 1143 591"/>
+  <text x="1223" y="379" class="small">completed result</text>
+
+  <!-- Response and failure notes -->
+  <path class="line" d="M987 670 C983 718 734 730 469 730 C274 730 172 620 137 360"/>
+
+  <path d="M545 778 C558 773 573 776 589 775 L1587 777 C1601 778 1608 786 1607 800 L1605 877 C1604 891 1595 897 1581 896 L556 897 C543 896 537 888 538 874 L540 796 C540 787 541 781 545 778Z" fill="#fff0ec" stroke="#ae6458" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" filter="url(#paper)"/>
+  <text x="563" y="813" class="head">Failure paths stay explicit</text>
+  <text x="563" y="842" class="body">A processor failure can save a FAILED summary when PostgreSQL is available.</text>
+  <text x="563" y="871" class="small">A publication failure returns 503 and may leave no saved file record.</text>
+
+  <text x="1625" y="944" class="small" text-anchor="end">geo-api · current implementation</text>
+</svg>
