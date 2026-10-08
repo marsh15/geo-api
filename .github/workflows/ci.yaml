@@ -1,0 +1,80 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  quality-and-tests:
+    runs-on: ubuntu-24.04
+    services:
+      postgres:
+        image: postgres:17.11-bookworm@sha256:639ab7ceb90e13123085b741fb31ef493fba25463002f6da665352e7b534b652
+        env:
+          POSTGRES_DB: geo_api
+          POSTGRES_USER: geo_api
+          POSTGRES_PASSWORD: geo_api_test_only
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U geo_api -d geo_api"
+          --health-interval 2s
+          --health-timeout 2s
+          --health-retries 30
+    env:
+      DATABASE_URL: postgresql+psycopg://geo_api:geo_api_test_only@127.0.0.1:5432/geo_api
+      TEST_DATABASE_URL: postgresql+psycopg://geo_api:geo_api_test_only@127.0.0.1:5432/geo_api
+      TEMP_ROOT: /tmp/geo_api-ci
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: 3.13.16
+          cache: pip
+      - name: Install uv
+        run: python -m pip install uv==0.12.19
+      - name: Install locked dependencies
+        run: uv sync --frozen --all-groups
+      - name: Quality checks
+        run: |
+          uv run ruff format --check .
+          uv run ruff check .
+          uv run mypy src/geo_api
+      - name: Audit locked dependencies
+        run: uv audit --frozen
+      - name: Apply database migrations
+        run: uv run alembic upgrade head
+      - name: Run tests
+        run: uv run pytest -q
+
+  docker-smoke:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - name: Start local stack
+        run: |
+          cp .env.example .env
+          docker compose up --build -d
+      - name: Exercise upload and retrieval
+        run: |
+          for attempt in $(seq 1 60); do
+            if curl --fail --silent http://127.0.0.1:8000/health/ready >/dev/null; then
+              break
+            fi
+            sleep 1
+          done
+          curl --fail --silent --show-error \
+            -F 'file=@tests/fixtures/sample.kml' \
+            http://127.0.0.1:8000/api/files/ > /tmp/geo_api-upload.json
+          python -c 'import json; r=json.load(open("/tmp/geo_api-upload.json")); assert r["status"] == "COMPLETED" and r["feature_count"] == 1; print(r["id"])'
+      - name: Show stack logs on failure
+        if: failure()
+        run: docker compose logs
+      - name: Stop local stack
+        if: always()
+        run: docker compose down -v
