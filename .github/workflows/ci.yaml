@@ -31,8 +31,8 @@ jobs:
       TEST_DATABASE_URL: postgresql+psycopg://geo_api:geo_api_test_only@127.0.0.1:5432/geo_api
       TEMP_ROOT: /tmp/geo_api-ci
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
+      - uses: actions/checkout@v7
+      - uses: actions/setup-python@v7
         with:
           python-version: 3.13.16
           cache: pip
@@ -55,7 +55,7 @@ jobs:
   docker-smoke:
     runs-on: ubuntu-24.04
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - name: Start local stack
         run: |
           cp .env.example .env
